@@ -35,7 +35,7 @@ inline proto::VarType::Type ToVarType(std::type_index type) {
     return proto::VarType_Type_SELECTED_ROWS;
   } else if (type.hash_code() == typeid(ReaderHolder).hash_code()) {
     return proto::VarType_Type_READER;
-  } else if (type.hash_code() == typeid(ChannelHolder).hash_code()) {
+  } else if (type.hash_code() == typeid(Channel).hash_code()) {
     return proto::VarType_Type_CHANNEL;
   } else {
     PADDLE_THROW("ToVarType:Unsupported type %s", type.name());
@@ -61,7 +61,7 @@ inline void VisitVarType(const framework::Variable& var, Visitor visitor) {
       visitor(var.Get<ReaderHolder>());
       return;
     case proto::VarType_Type_CHANNEL:
-      visitor(var.Get<ChannelHolder>());
+      visitor(var.Get<Channel>());
       return;
     default:
       PADDLE_THROW("Not supported visit type, %d", ToVarType(var.Type()));
