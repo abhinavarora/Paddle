@@ -185,7 +185,7 @@ void ChannelImpl<T>::Send(T *item) {
   if (m->chan_closed) {
     lock.unlock();
     send_return();
-    PADDLE_THROW("Cannot send on closed channel");
+    // PADDLE_THROW("Cannot send on closed channel");
   }
   send_return();
 }
