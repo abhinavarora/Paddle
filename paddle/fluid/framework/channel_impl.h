@@ -181,7 +181,7 @@ void ChannelImpl<T>::Send(T *item) {
   auto m = std::make_shared<QueueMessage>(item);
   sendq.push_back(m);
   m->Wait(lock);
-  // std::cerr << "Bhai Jaag gaya -- " << m->chan_closed << "  " << std::endl;
+  std::cerr << "Bhai Jaag gaya -- " << m->chan_closed << "  " << std::endl;
   if (m->chan_closed) {
     lock.unlock();
     send_return();
@@ -308,7 +308,7 @@ void ChannelImpl<T>::Close() {
       m->callback(ChannelAction::CLOSE);
     }
 
-    std::cerr << "Karo notify bc " << std::endl;
+    // std::cerr << "Karo notify bc " << std::endl;
     m->Notify();
   }
 }
