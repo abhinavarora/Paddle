@@ -39,8 +39,12 @@ void ChannelDestroyUnblockSenders(Channel<int> *ch, bool isBuffered) {
         [&](bool *ended, bool *success) {
           int data = 10;
           bool is_exception = false;
-          ch->Send(&data);
-
+          try {
+            ch->Send(&data);
+          } catch (paddle::platform::EnforceNotMet e) {
+            is_exception = true;
+          }
+          *success = !is_exception;
           *ended = true;
         },
         &thread_ended[i], &send_success[i]);
@@ -71,21 +75,6 @@ void ChannelDestroyUnblockSenders(Channel<int> *ch, bool isBuffered) {
     EXPECT_EQ(thread_ended[i], true);
   }
 
-  // Count number of successful sends
-  int ct = 0;
-  for (size_t i = 0; i < num_threads; i++) {
-    if (send_success[i]) ct++;
-  }
-
-  /*
-  if (isBuffered) {
-    // Only 1 send must be successful
-    EXPECT_EQ(ct, 1);
-  } else {
-    // In unbuffered channel, no send should be successful
-    EXPECT_EQ(ct, 0);
-  }
-  */
   // Join all threads
   for (size_t i = 0; i < num_threads; i++) t[i].join();
 }
