@@ -52,9 +52,42 @@ void ChannelDestroyUnblockSenders(Channel<int> *ch, bool isBuffered) {
 
   std::this_thread::sleep_for(std::chrono::milliseconds(200));  // wait 0.2 sec
 
+  if (isBuffered) {
+    // If channel is buffered, verify that atleast 4 threads are blocked
+    int ct = 0;
+    for (size_t i = 0; i < num_threads; i++) {
+      if (thread_ended[i] == false) ct++;
+    }
+    // Atleast 4 threads must be blocked
+    EXPECT_GE(ct, 4);
+  } else {
+    // Verify that all the threads are blocked
+    for (size_t i = 0; i < num_threads; i++) {
+      EXPECT_EQ(thread_ended[i], false);
+    }
+  }
   // Explicitly destroy the channel
   delete ch;
   std::this_thread::sleep_for(std::chrono::milliseconds(200));  // wait
+
+  // Verify that all threads got unblocked
+  for (size_t i = 0; i < num_threads; i++) {
+    EXPECT_EQ(thread_ended[i], true);
+  }
+
+  // Count number of successful sends
+  int ct = 0;
+  for (size_t i = 0; i < num_threads; i++) {
+    if (send_success[i]) ct++;
+  }
+
+  if (isBuffered) {
+    // Only 1 send must be successful
+    EXPECT_EQ(ct, 1);
+  } else {
+    // In unbuffered channel, no send should be successful
+    EXPECT_EQ(ct, 0);
+  }
 
   // Join all threads
   for (size_t i = 0; i < num_threads; i++) t[i].join();
