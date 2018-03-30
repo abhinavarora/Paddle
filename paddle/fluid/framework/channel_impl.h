@@ -17,6 +17,7 @@ limitations under the License. */
 #include <atomic>
 #include <condition_variable>
 #include <deque>
+#include <iostream>
 #include "paddle/fluid/framework/channel.h"
 #include "paddle/fluid/platform/enforce.h"
 
@@ -365,6 +366,7 @@ void ChannelImpl<T>::RemoveFromReceiveQ(const void *referrer) {
 
 template <typename T>
 ChannelImpl<T>::~ChannelImpl() {
+  std::cout << "Send Ctr is " << send_ctr << "  haha bc" << std::endl;
   Close();
   // The destructor must wait for all readers and writers to complete their task
   // The channel has been closed, so we will not accept new readers and writers
