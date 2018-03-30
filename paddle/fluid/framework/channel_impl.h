@@ -368,16 +368,16 @@ void ChannelImpl<T>::RemoveFromReceiveQ(const void *referrer) {
 
 template <typename T>
 ChannelImpl<T>::~ChannelImpl() {
-  std::cout << "Send Ctr is " << send_ctr << "  haha bc" << std::endl;
+  // std::cout << "Send Ctr is " << send_ctr << "  haha bc" << std::endl;
   Close();
   // The destructor must wait for all readers and writers to complete their task
   // The channel has been closed, so we will not accept new readers and writers
   std::unique_lock<std::recursive_mutex> lock{mu_};
-  std::cerr << "Lock mi gaya bc  " << send_ctr << std::endl;
+  // std::cerr << "Lock mi gaya bc  " << send_ctr << std::endl;
 
   destructor_cond_.wait(lock,
                         [this]() { return send_ctr == 0 && recv_ctr == 0; });
-  std::cerr << "Me yaha nahi aunga  " << std::endl;
+  // std::cerr << "Me yaha nahi aunga  " << std::endl;
 }
 
 }  // namespace framework
