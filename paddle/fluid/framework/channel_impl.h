@@ -308,6 +308,7 @@ void ChannelImpl<T>::Close() {
       m->callback(ChannelAction::CLOSE);
     }
 
+    std::cerr << "Karo notify bc " << std::endl;
     m->Notify();
   }
 }
