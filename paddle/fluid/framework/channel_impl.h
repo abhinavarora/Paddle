@@ -183,8 +183,8 @@ void ChannelImpl<T>::Send(T *item) {
   m->Wait(lock);
   // std::cerr << "Bhai Jaag gaya -- " << m->chan_closed << "  " << std::endl;
   if (m->chan_closed) {
-    lock.unlock();
     send_return();
+    lock.unlock();
     return;
     // PADDLE_THROW("Cannot send on closed channel");
   }
