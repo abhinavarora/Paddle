@@ -173,7 +173,7 @@ class UnpaddingLoDTensorFunctor<platform::CUDADeviceContext, T> {
                       "width of sequence in LoDTensor seq.");
 
     if (!norm_by_times && num_sequences == 1UL) {
-      TensorCopy(&padding, context.GetPlace(), context, seq);
+      paddle::framework::TensorCopy(&padding, context.GetPlace(), context, seq);
       seq->Resize(seq_dims);
       return;
     }
