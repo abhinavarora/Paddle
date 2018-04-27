@@ -137,7 +137,7 @@ template <typename T>
 class UnpaddingLoDTensorFunctor<platform::CUDADeviceContext, T> {
  public:
   void operator()(const platform::CUDADeviceContext& context,
-                  framework::LoDTensor* seq, const framework::Tensor* padding,
+                  framework::LoDTensor* seq, const framework::Tensor& padding,
                   bool norm_by_times) {
     auto lod = seq->lod();
     PADDLE_ENFORCE_GT(lod.size(), 0UL,
@@ -152,7 +152,7 @@ class UnpaddingLoDTensorFunctor<platform::CUDADeviceContext, T> {
                       "The first dimension of LoDTensor seq should be "
                       "equal to the sum of all sequences's length.");
 
-    auto padding_dims = padding->dims();
+    auto padding_dims = padding.dims();
     PADDLE_ENFORCE_EQ(padding_dims.size(), 3UL,
                       "The input padding should be a 3-D Tensor of shape "
                       "[max_sequnece_length, num_sequences, sequence_width].");
@@ -173,7 +173,7 @@ class UnpaddingLoDTensorFunctor<platform::CUDADeviceContext, T> {
                       "width of sequence in LoDTensor seq.");
 
     if (!norm_by_times && num_sequences == 1UL) {
-      TensorCopy(padding, context.GetPlace(), context, seq);
+      TensorCopy(&padding, context.GetPlace(), context, seq);
       seq->Resize(seq_dims);
       return;
     }
@@ -192,7 +192,7 @@ class UnpaddingLoDTensorFunctor<platform::CUDADeviceContext, T> {
     size_t grid_dim_y = num_sequences;
     dim3 grid(grid_dim_x, grid_dim_y);
 
-    const T* padding_data = padding->data<T>();
+    const T* padding_data = padding.data<T>();
     T* seq_data = seq->data<T>();
     if (norm_by_times) {
       SequencePaddingKernel<T, 1, 0><<<grid, threads, 0, context.stream()>>>(

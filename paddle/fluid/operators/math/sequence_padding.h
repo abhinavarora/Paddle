@@ -72,7 +72,7 @@ template <typename DeviceContext, typename T>
 class UnpaddingLoDTensorFunctor {
  public:
   void operator()(const DeviceContext& context, framework::LoDTensor* seq,
-                  const framework::Tensor* padding, bool norm_by_times);
+                  const framework::Tensor& padding, bool norm_by_times);
 };
 
 }  // namespace math

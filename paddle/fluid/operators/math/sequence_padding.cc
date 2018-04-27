@@ -84,7 +84,7 @@ template <typename T>
 class UnpaddingLoDTensorFunctor<platform::CPUDeviceContext, T> {
  public:
   void operator()(const platform::CPUDeviceContext& context,
-                  framework::LoDTensor* seq, const framework::Tensor* padding,
+                  framework::LoDTensor* seq, const framework::Tensor& padding,
                   bool norm_by_times) {
     auto lod = seq->lod();
     PADDLE_ENFORCE_GT(lod.size(), 0UL,
@@ -99,7 +99,7 @@ class UnpaddingLoDTensorFunctor<platform::CPUDeviceContext, T> {
                       "The first dimension of LoDTensor seq should be "
                       "equal to the sum of all sequences's length.");
 
-    auto padding_dims = padding->dims();
+    auto padding_dims = padding.dims();
     PADDLE_ENFORCE_EQ(padding_dims.size(), 3UL,
                       "The input padding should be a 3-D Tensor of shape "
                       "[max_sequnece_length, num_sequences, sequence_width].");
@@ -119,7 +119,7 @@ class UnpaddingLoDTensorFunctor<platform::CPUDeviceContext, T> {
                       "The third dimension of Tensor padding should be the "
                       "width of sequence in LoDTensor seq.");
 
-    const T* padding_data = padding->data<T>();
+    const T* padding_data = padding.data<T>();
     T* seq_data = seq->data<T>();
     for (int64_t i = 0; i < num_sequences; ++i) {
       int64_t start_pos = abs_offset_lod[level][i];

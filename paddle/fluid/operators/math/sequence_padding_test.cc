@@ -59,7 +59,7 @@ void TestSequencePadding(const paddle::framework::LoD& lod,
   seq_back.set_lod(lod);
   seq_back.mutable_data<T>(seq_dims, *place);
   paddle::operators::math::UnpaddingLoDTensorFunctor<DeviceContext, T>()(
-      *context, &seq_back, &padding, false);
+      *context, &seq_back, padding, false);
 
   if (paddle::platform::is_cpu_place(*place)) {
     cpu_seq_back = seq_back;
